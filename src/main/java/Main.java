@@ -34,9 +34,23 @@ public class Main {
 
 
     public static void testBiostar(){
+
         Biostar biostar = new Biostar("complex","HR","12345qwerty");
+
         GetDevice device = biostar.getDeviceByID("539332191");
         System.out.println(device.getPort());
         System.out.println(device.getIP());
+
+        EventQuery eventQuery = new EventQuery();
+        eventQuery.setDevice_id("539332191");
+
+        boolean next = true;
+        while(next){
+            EventLogSearchResultWithoutTotal log = biostar.searchMore(eventQuery);
+            log.showLog();
+            next = log.isNext();
+        }
+        System.out.println("end");
+
     }
 }

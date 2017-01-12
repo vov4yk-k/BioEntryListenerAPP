@@ -18,6 +18,7 @@ import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.List;
 
@@ -138,8 +139,51 @@ public class Biostar {
         return  device;
     }
 
-    public EventLogSearchResultWithoutTotal searchMore(){
+    public EventLogSearchResultWithoutTotal searchMore(EventQuery eventQuery){
+
         EventLogSearchResultWithoutTotal log = null;
+
+        Gson gson = new Gson();
+        HttpClient client = new DefaultHttpClient();
+        HttpPost post = new HttpPost("https://api.biostar2.com/v1/monitoring/event_log/search_more");
+
+        //set query
+        StringEntity input = null;
+        try {
+            input = new StringEntity(gson.toJson(eventQuery));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        input.setContentType("application/json");
+        post.setEntity(input);
+
+        //cookie
+        CookieStore cookieStore = new BasicCookieStore();
+        BasicClientCookie cookie = new BasicClientCookie("bs-cloud-session-id",
+                loggedInUser.getCookie().getValue());
+        cookie.setDomain(loggedInUser.getCookie().getDomain());
+        cookie.setPath("/");
+        cookieStore.addCookie(cookie);
+
+        HttpClientContext context = HttpClientContext.create();
+        context.setCookieStore(cookieStore);
+
+        HttpResponse response = null;
+        String responseBody = null;
+        try {
+            //posting
+            response = client.execute(post, context);
+            //response processing
+            HttpEntity entity = response.getEntity();
+            responseBody = EntityUtils.toString(entity);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
+            log = gson.fromJson(responseBody,EventLogSearchResultWithoutTotal.class);
+        }
+
         return log;
     }
 }
