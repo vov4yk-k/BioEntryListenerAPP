@@ -4,6 +4,7 @@ import jpcap.JpcapCaptor;
 import jpcap.NetworkInterface;
 
 import javax.swing.*;
+import java.net.InetAddress;
 
 /**
  * Created by Користувач on 11.01.2017.
@@ -14,7 +15,7 @@ public class SnifferThread extends Thread {
     private boolean type;
     private NetworkInterface[] devices;
     private JpcapCaptor jpcap;
-
+    private InetAddress srcIP;
     /* Constructor*/
     public SnifferThread (int device, DefaultListModel jep, boolean type)
     {
@@ -23,10 +24,11 @@ public class SnifferThread extends Thread {
         this.type = type;
     }
 
-    public SnifferThread (int device, boolean type)
+    public SnifferThread (int device, boolean type, InetAddress srcIP)
     {
         ldevice = device;
         this.type = type;
+        this.srcIP = srcIP;
     }
 
     /*
@@ -50,7 +52,7 @@ public class SnifferThread extends Thread {
             devices = JpcapCaptor.getDeviceList();
             jpcap = JpcapCaptor.openDevice(devices[ldevice], 2000, false, 20);
             //jpcap.loopPacket(-1,new Sniffer(ljep,type));
-            jpcap.loopPacket(-1,new Sniffer(type));
+            jpcap.loopPacket(-1,new Sniffer(type, srcIP));
         }
         catch(Exception ex)
         {

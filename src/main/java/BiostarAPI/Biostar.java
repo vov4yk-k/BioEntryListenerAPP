@@ -3,17 +3,22 @@ package BiostarAPI;
 import com.google.gson.Gson;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 
 /**
@@ -33,7 +38,7 @@ public class Biostar {
         private String notification_token;
     }
 
-    Biostar(String subName, String user_id, String password) {
+    public Biostar(String subName, String user_id, String password) {
         loggedInUser = authClient(subName, user_id, password);
     }
 
@@ -83,4 +88,58 @@ public class Biostar {
 
     }
 
+    public GetDevice getDeviceByID(String deviceID){
+
+        GetDevice device = null;
+
+        Gson gson = new Gson();
+        HttpClient client = new DefaultHttpClient();
+
+        java.net.URI uri = null;
+        try {
+            uri = new URIBuilder("https://api.biostar2.com/v1/devices/"+deviceID)
+                    .addParameter("limit", "15").addParameter("offset", "0")
+                    .build();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+        HttpGet get = new HttpGet(uri);
+
+        CookieStore cookieStore = new BasicCookieStore();
+        BasicClientCookie cookie = new BasicClientCookie("bs-cloud-session-id",
+                loggedInUser.getCookie().getValue());
+        cookie.setDomain(loggedInUser.getCookie().getDomain());
+        cookie.setPath("/");
+        cookieStore.addCookie(cookie);
+
+        HttpClientContext context = HttpClientContext.create();
+        context.setCookieStore(cookieStore);
+
+
+        //getting
+        HttpResponse response = null;
+        String responseBody = null;
+        try {
+            response = client.execute(get, context);
+            HttpEntity entity = response.getEntity();
+            responseBody = EntityUtils.toString(entity);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+        if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+            device = gson.fromJson(responseBody,
+                    GetDevice.class);
+
+            //list = searchResult.getRecords();
+        }
+
+        return  device;
+    }
+
+    public EventLogSearchResultWithoutTotal searchMore(){
+        EventLogSearchResultWithoutTotal log = null;
+        return log;
+    }
 }

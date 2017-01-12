@@ -5,7 +5,7 @@ import java.util.Date;
 /**
  * Created by Користувач on 11.01.2017.
  */
-public class EventLogResult {
+class EventLogResult {
     Date datetime;
     SimpleDevice device;
     SimpleDoor door;

@@ -5,7 +5,7 @@ import org.apache.http.cookie.Cookie;
 /**
  * Created by Користувач on 11.01.2017.
  */
-public class LoggedInUser {
+class LoggedInUser {
     String account_id;
     String email;
     String name;

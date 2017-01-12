@@ -3,7 +3,7 @@ package BiostarAPI;
 /**
  * Created by Користувач on 11.01.2017.
  */
-public class EventQuery {
+class EventQuery {
     String[] datetime;
     long[] device_id;
     String[] event_type_code;

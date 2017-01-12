@@ -19,6 +19,7 @@ public class Sniffer implements PacketReceiver {
     private DefaultListModel ljep;
     private boolean displayhex;
     private int pknum;
+    InetAddress sourceIP;
 
     /* Constructor */
     public Sniffer(DefaultListModel jep, boolean hex) {
@@ -27,9 +28,10 @@ public class Sniffer implements PacketReceiver {
         pknum = 0;
     }
 
-    public Sniffer(boolean hex) {
+    public Sniffer(boolean hex, InetAddress IP) {
         displayhex = hex;
         pknum = 0;
+        sourceIP = IP;
     }
 
     /* Returns a hex string representation of a byte value.*/
@@ -73,8 +75,8 @@ public class Sniffer implements PacketReceiver {
 
 
     public void parsePackets(Packet p) throws IOException {
-        if (p == null || p == Packet.EOF)
-            return;
+        //if (p == null || p == Packet.EOF)
+        //    return;
 
         //if (!(p instanceof TCPPacket))
         //    continue;
@@ -83,9 +85,10 @@ public class Sniffer implements PacketReceiver {
 
         InetAddress addr = tcpPacket.src_ip;
 
-        //System.out.println(addr + " " + tcpPacket.dst_port);
-        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-        Date date = new java.util.Date();
-        System.out.println(tcpPacket.src_ip+": "+tcpPacket.src_port + " --> " + tcpPacket.dst_ip+": "+tcpPacket.dst_port+ "    "+dateFormat.format(date));
+        if(addr.equals(sourceIP)) {
+            DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+            Date date = new java.util.Date();
+            System.out.println(tcpPacket.src_ip + ": " + tcpPacket.src_port + " --> " + tcpPacket.dst_ip + ": " + tcpPacket.dst_port + "    " + dateFormat.format(date));
+        }
     }
 }

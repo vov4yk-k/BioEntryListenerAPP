@@ -1,6 +1,6 @@
 package BiostarAPI;
 
-public class EventLogSearchResultWithoutTotal {
+class EventLogSearchResultWithoutTotal {
     boolean is_next;
     String message;
     EventLogResult[] records;
