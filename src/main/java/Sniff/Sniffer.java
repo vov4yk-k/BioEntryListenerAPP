@@ -1,5 +1,7 @@
 package Sniff;
 
+import BiostarAPI.Biostar;
+import BiostarAPI.EventQuery;
 import jpcap.PacketReceiver;
 import jpcap.packet.Packet;
 import jpcap.packet.TCPPacket;
@@ -20,6 +22,7 @@ public class Sniffer implements PacketReceiver {
     private boolean displayhex;
     private int pknum;
     InetAddress sourceIP;
+    Biostar biostar;
 
     /* Constructor */
     public Sniffer(DefaultListModel jep, boolean hex) {
@@ -32,6 +35,11 @@ public class Sniffer implements PacketReceiver {
         displayhex = hex;
         pknum = 0;
         sourceIP = IP;
+    }
+
+    public Sniffer(boolean hex, InetAddress sourceIP, Biostar biostar) {
+        this(hex, sourceIP);
+        this.biostar =  biostar;
     }
 
     /* Returns a hex string representation of a byte value.*/
@@ -90,5 +98,13 @@ public class Sniffer implements PacketReceiver {
             Date date = new java.util.Date();
             System.out.println(tcpPacket.src_ip + ": " + tcpPacket.src_port + " --> " + tcpPacket.dst_ip + ": " + tcpPacket.dst_port + "    " + dateFormat.format(date));
         }
+
+        if (biostar!=null){
+
+        }
+    }
+
+    private void showLogBiostar(){
+
     }
 }

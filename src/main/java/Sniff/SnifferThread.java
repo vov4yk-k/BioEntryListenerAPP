@@ -1,5 +1,6 @@
 package Sniff;
 
+import BiostarAPI.Biostar;
 import jpcap.JpcapCaptor;
 import jpcap.NetworkInterface;
 
@@ -16,6 +17,8 @@ public class SnifferThread extends Thread {
     private NetworkInterface[] devices;
     private JpcapCaptor jpcap;
     private InetAddress srcIP;
+    private Biostar biostar;
+
     /* Constructor*/
     public SnifferThread (int device, DefaultListModel jep, boolean type)
     {
@@ -29,6 +32,14 @@ public class SnifferThread extends Thread {
         ldevice = device;
         this.type = type;
         this.srcIP = srcIP;
+    }
+
+    public SnifferThread (int device, boolean type, Biostar biostar)
+    {
+        this.ldevice = device;
+        this.type = type;
+        this.srcIP = biostar.getDevice().getIP();
+        this.biostar = biostar;
     }
 
     /*
@@ -52,7 +63,7 @@ public class SnifferThread extends Thread {
             devices = JpcapCaptor.getDeviceList();
             jpcap = JpcapCaptor.openDevice(devices[ldevice], 2000, false, 20);
             //jpcap.loopPacket(-1,new Sniffer(ljep,type));
-            jpcap.loopPacket(-1,new Sniffer(type, srcIP));
+            jpcap.loopPacket(-1,new Sniffer(type, srcIP, biostar));
         }
         catch(Exception ex)
         {

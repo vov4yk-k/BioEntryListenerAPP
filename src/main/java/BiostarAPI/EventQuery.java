@@ -21,8 +21,7 @@ public class EventQuery {
 
     public void setDevice_id(String device_id) {
         long id = Long.parseLong(device_id);
-        long[] devices = {id};
-        this.device_id = devices;
+        this.device_id = new long[]{id};
     }
 
     public void setEvent_type_code(String[] event_type_code) {

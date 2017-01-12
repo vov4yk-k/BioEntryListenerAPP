@@ -20,7 +20,12 @@ import org.apache.http.util.EntityUtils;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Created by Користувач on 11.01.2017.
@@ -28,6 +33,8 @@ import java.util.List;
 public class Biostar {
 
     private LoggedInUser loggedInUser;
+    private String deviceId;
+
 
     class UserLoginRequestData {
         private String name;
@@ -41,6 +48,10 @@ public class Biostar {
 
     public Biostar(String subName, String user_id, String password) {
         loggedInUser = authClient(subName, user_id, password);
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
     }
 
     public LoggedInUser authClient(String subName, String user_id, String password) {
@@ -139,13 +150,19 @@ public class Biostar {
         return  device;
     }
 
-    public EventLogSearchResultWithoutTotal searchMore(EventQuery eventQuery){
+    public GetDevice getDevice(){
+        return getDeviceByID(deviceId);
+    }
+
+    public EventLogSearchResultWithoutTotal searchLog(EventQuery eventQuery,boolean more){
 
         EventLogSearchResultWithoutTotal log = null;
 
+        String query = "https://api.biostar2.com/v1/monitoring/event_log/search" + (more ? "_more" : "");
+
         Gson gson = new Gson();
         HttpClient client = new DefaultHttpClient();
-        HttpPost post = new HttpPost("https://api.biostar2.com/v1/monitoring/event_log/search_more");
+        HttpPost post = new HttpPost(query);
 
         //set query
         StringEntity input = null;
@@ -185,5 +202,11 @@ public class Biostar {
         }
 
         return log;
+    }
+
+    public static String getISO8601StringForDate(Date date) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return dateFormat.format(date);
     }
 }
