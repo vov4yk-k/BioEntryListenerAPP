@@ -20,7 +20,8 @@ public class Main {
 
     public static void main(String[] args) {
         //testSniffer();
-        testBiostar();
+        //testBiostar();
+        testBioSniffer();
     }
 
     public static void testSniffer(){
@@ -75,10 +76,7 @@ public class Main {
 
     public static void testBioSniffer(){
         Biostar biostar = new Biostar("complex","HR","12345qwerty");
-
-        GetDevice device = biostar.getDeviceByID("539332191");
-        System.out.println(device.getPort());
-        System.out.println(device.getIP());
+        biostar.setDeviceId("539332191");
 
         SnifferThread snifferThread = new SnifferThread(0,true,biostar);
         snifferThread.start();

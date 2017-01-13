@@ -1,6 +1,7 @@
 package Sniff;
 
 import BiostarAPI.Biostar;
+import BiostarAPI.EventLogSearchResultWithoutTotal;
 import BiostarAPI.EventQuery;
 import jpcap.PacketReceiver;
 import jpcap.packet.Packet;
@@ -11,6 +12,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -97,14 +99,28 @@ public class Sniffer implements PacketReceiver {
             DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
             Date date = new java.util.Date();
             System.out.println(tcpPacket.src_ip + ": " + tcpPacket.src_port + " --> " + tcpPacket.dst_ip + ": " + tcpPacket.dst_port + "    " + dateFormat.format(date));
+            if (biostar!=null){
+                showLogBiostar();
+            }
         }
 
-        if (biostar!=null){
-
-        }
     }
 
     private void showLogBiostar(){
+
+        EventQuery eventQuery = new EventQuery();
+        Calendar date = Calendar.getInstance();
+        Date startDate = new java.util.Date(date.getTimeInMillis() - 5000);
+        Date curDate = new java.util.Date(date.getTimeInMillis());
+        String[] dateArray ={Biostar.getISO8601StringForDate(startDate),Biostar.getISO8601StringForDate(curDate)};
+        eventQuery.setDatetime(dateArray);
+
+        System.out.println(startDate+ " - "+curDate);
+
+        eventQuery.setDevice_id(biostar.getDeviceId());
+
+        EventLogSearchResultWithoutTotal nextLog = biostar.searchLog(eventQuery,false);
+        nextLog.showLog();
 
     }
 }

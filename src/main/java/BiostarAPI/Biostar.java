@@ -54,6 +54,10 @@ public class Biostar {
         this.deviceId = deviceId;
     }
 
+    public String getDeviceId(){
+        return this.deviceId;
+    }
+
     public LoggedInUser authClient(String subName, String user_id, String password) {
 
         //resp
