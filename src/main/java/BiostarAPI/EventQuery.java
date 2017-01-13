@@ -4,12 +4,12 @@ package BiostarAPI;
  * Created by Користувач on 11.01.2017.
  */
 public class EventQuery {
-    String[] datetime;
-    long[] device_id;
-    String[] event_type_code;
-    long limit;
-    long offset;
-    String[] user_id;
+    private String[] datetime;
+    private long[] device_id;
+    private String[] event_type_code;
+    private long limit;
+    private long offset;
+    private String[] user_id;
 
     public void setDatetime(String[] datetime) {
         this.datetime = datetime;

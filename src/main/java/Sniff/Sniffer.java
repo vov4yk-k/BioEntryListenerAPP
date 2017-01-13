@@ -98,7 +98,7 @@ public class Sniffer implements PacketReceiver {
         if(addr.equals(sourceIP)) {
             DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
             Date date = new java.util.Date();
-            System.out.println(tcpPacket.src_ip + ": " + tcpPacket.src_port + " --> " + tcpPacket.dst_ip + ": " + tcpPacket.dst_port + "    " + dateFormat.format(date));
+            //System.out.println(tcpPacket.src_ip + ": " + tcpPacket.src_port + " --> " + tcpPacket.dst_ip + ": " + tcpPacket.dst_port + "    " + dateFormat.format(date));
             if (biostar!=null){
                 showLogBiostar();
             }
@@ -115,12 +115,13 @@ public class Sniffer implements PacketReceiver {
         String[] dateArray ={Biostar.getISO8601StringForDate(startDate),Biostar.getISO8601StringForDate(curDate)};
         eventQuery.setDatetime(dateArray);
 
-        System.out.println(startDate+ " - "+curDate);
+        //System.out.println(startDate+ " - "+curDate);
 
         eventQuery.setDevice_id(biostar.getDeviceId());
 
         EventLogSearchResultWithoutTotal nextLog = biostar.searchLog(eventQuery,false);
-        nextLog.showLog();
+
+        System.out.println(nextLog.authenticated()+ " "+curDate);
 
     }
 }

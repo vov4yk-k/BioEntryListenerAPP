@@ -2,12 +2,13 @@ package BiostarAPI;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.util.Arrays;
 import java.util.Date;
 
 /**
  * Created by Користувач on 11.01.2017.
  */
-class EventLogResult {
+public class EventLogResult implements Comparable {
     Date datetime;
     SimpleDevice device;
     SimpleDoor door;
@@ -40,5 +41,19 @@ class EventLogResult {
         stringBuilder.append(" ");
         stringBuilder.append(user_group);
         return stringBuilder.toString();
+    }
+
+    public int compareTo(Object o) {
+        EventLogResult tmp = (EventLogResult) o;
+        if(this.datetime.before(tmp.datetime)) {
+            return -1;
+        }else if (this.datetime.after(tmp.datetime)){
+            return 1;
+        }
+        return 0;
+    }
+
+    public int getEventTypeCode(){
+        return event_type.code;
     }
 }
