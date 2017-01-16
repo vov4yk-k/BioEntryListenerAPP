@@ -22,10 +22,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
+import java.util.*;
 
 /**
  * Created by Користувач on 11.01.2017.
@@ -52,6 +49,10 @@ public class Biostar {
 
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
+    }
+
+    public LoggedInUser getLoggedInUser() {
+        return loggedInUser;
     }
 
     public String getDeviceId(){
@@ -178,6 +179,7 @@ public class Biostar {
         input.setContentType("application/json");
         post.setEntity(input);
 
+
         //cookie
         CookieStore cookieStore = new BasicCookieStore();
         BasicClientCookie cookie = new BasicClientCookie("bs-cloud-session-id",
@@ -213,4 +215,160 @@ public class Biostar {
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         return dateFormat.format(date);
     }
+
+    public VerifyFingerprintResult verifyFingerprint(VerifyFingerprintOption fingerprint){
+
+        VerifyFingerprintResult verifyFingerprintResult = null;
+
+        String query = "POST /devices/"+deviceId+"/verify_fingerprint";
+
+        Gson gson = new Gson();
+        HttpClient client = new DefaultHttpClient();
+        HttpPost post = new HttpPost(query);
+
+
+        //ArrayList<NameValuePair> postParameters;
+
+        //set query
+        StringEntity input = null;
+        try {
+            input = new StringEntity(gson.toJson(fingerprint));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        input.setContentType("application/json");
+
+        post.setEntity(input);
+
+
+        //cookie
+        CookieStore cookieStore = new BasicCookieStore();
+        BasicClientCookie cookie = new BasicClientCookie("bs-cloud-session-id",
+                loggedInUser.getCookie().getValue());
+        cookie.setDomain(loggedInUser.getCookie().getDomain());
+        cookie.setPath("/");
+        cookieStore.addCookie(cookie);
+
+        HttpClientContext context = HttpClientContext.create();
+        context.setCookieStore(cookieStore);
+
+        HttpResponse response = null;
+        String responseBody = null;
+        try {
+            //posting
+            response = client.execute(post, context);
+            //response processing
+            HttpEntity entity = response.getEntity();
+            responseBody = EntityUtils.toString(entity);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
+            verifyFingerprintResult = gson.fromJson(responseBody,VerifyFingerprintResult.class);
+        }
+        return verifyFingerprintResult;
+    }
+
+    public ArrayList<ListUserItem> getUserList() {
+
+        //ListUserItem[] list;
+
+        ArrayList<ListUserItem> list = new ArrayList<ListUserItem>();
+
+        Gson gson = new Gson();
+        HttpClient client = new DefaultHttpClient();
+
+        java.net.URI uri = null;
+        try {
+            uri = new URIBuilder("https://api.biostar2.com/v1/users")
+                    .addParameter("limit", "15").addParameter("offset", "0")
+                    .build();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+        HttpGet get = new HttpGet(uri);
+
+        CookieStore cookieStore = new BasicCookieStore();
+        BasicClientCookie cookie = new BasicClientCookie("bs-cloud-session-id",
+                loggedInUser.getCookie().getValue());
+        cookie.setDomain(loggedInUser.getCookie().getDomain());
+        cookie.setPath("/");
+        cookieStore.addCookie(cookie);
+
+        HttpClientContext context = HttpClientContext.create();
+        context.setCookieStore(cookieStore);
+
+
+        //getting
+        HttpResponse response = null;
+        String responseBody = null;
+        try {
+            response = client.execute(get, context);
+            HttpEntity entity = response.getEntity();
+            responseBody = EntityUtils.toString(entity);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+            UserSearchResult searchResult = gson.fromJson(responseBody,
+                    UserSearchResult.class);
+
+            list = searchResult.getRecords();
+        }
+
+        return list;
+    }
+
+    public FingerprintTemplate[] getUsersFingerprint(String userID){
+
+        FingerprintTemplate[] fingerprintTemplate = null;
+
+        Gson gson = new Gson();
+        HttpClient client = new DefaultHttpClient();
+
+        java.net.URI uri = null;
+
+        try {
+            uri = new URIBuilder("https://api.biostar2.com/v1/users/"+userID+"/fingerprint")
+                    .addParameter("limit", "15").addParameter("offset", "0")
+                    .build();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+        HttpGet get = new HttpGet(uri);
+
+        CookieStore cookieStore = new BasicCookieStore();
+        BasicClientCookie cookie = new BasicClientCookie("bs-cloud-session-id",
+                loggedInUser.getCookie().getValue());
+        cookie.setDomain(loggedInUser.getCookie().getDomain());
+        cookie.setPath("/");
+        cookieStore.addCookie(cookie);
+
+        HttpClientContext context = HttpClientContext.create();
+        context.setCookieStore(cookieStore);
+
+
+        //getting
+        HttpResponse response = null;
+        String responseBody = null;
+        try {
+            response = client.execute(get, context);
+            HttpEntity entity = response.getEntity();
+            responseBody = EntityUtils.toString(entity);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+           fingerprintTemplate = gson.fromJson(responseBody,
+                    FingerprintTemplate[].class);
+        }
+
+        return fingerprintTemplate;
+    }
+
 }

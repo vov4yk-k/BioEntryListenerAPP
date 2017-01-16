@@ -8,10 +8,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
+import java.util.*;
 
 /**
  * Created by Користувач on 11.01.2017.
@@ -21,7 +18,8 @@ public class Main {
     public static void main(String[] args) {
         //testSniffer();
         //testBiostar();
-        testBioSniffer();
+        //testBioSniffer();
+        testVerifyFingerprint();
     }
 
     public static void testSniffer(){
@@ -70,6 +68,26 @@ public class Main {
             //next = nextLog.isNext();
         }
         System.out.println("end");
+
+    }
+
+    public static void testVerifyFingerprint(){
+        Biostar biostar = new Biostar("complex","HR","12345qwerty");
+        ArrayList<ListUserItem> userList = biostar.getUserList();
+        biostar.setDeviceId("539332191");
+        for (ListUserItem user: userList) {
+
+            System.out.println(user.getName());
+
+            FingerprintTemplate[] fingerprintTemplate = biostar.getUsersFingerprint(user.getUser_id());
+
+            if(fingerprintTemplate == null) continue;
+
+            VerifyFingerprintOption fingerprintOption = new VerifyFingerprintOption(fingerprintTemplate.getTemplate0(),fingerprintTemplate.getTemplate1());
+            VerifyFingerprintResult verifyFingerprintResponse = biostar.verifyFingerprint(fingerprintOption);
+            System.out.println(verifyFingerprintResponse.toString());
+
+        }
 
     }
 
