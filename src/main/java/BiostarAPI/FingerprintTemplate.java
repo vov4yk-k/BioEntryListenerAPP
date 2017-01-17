@@ -10,11 +10,11 @@ public class FingerprintTemplate {
     Object template0; //(object, optional): 지문 템플릿 패턴 정보 (base64 encoding string),
     Object template1; //(object, optional): 지문 템플릿 패턴 정보 (base64 encoding string)
 
-    public Object getTemplate0() {
-        return template0;
+    public String getTemplate0() {
+        return (String)template0;
     }
 
-    public Object getTemplate1() {
-        return template1;
+    public String getTemplate1() {
+        return (String)template1;
     }
 }

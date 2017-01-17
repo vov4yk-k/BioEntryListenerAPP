@@ -220,7 +220,7 @@ public class Biostar {
 
         VerifyFingerprintResult verifyFingerprintResult = null;
 
-        String query = "POST /devices/"+deviceId+"/verify_fingerprint";
+        String query = "https://api.biostar2.com/v1/devices/"+deviceId+"/verify_fingerprint";
 
         Gson gson = new Gson();
         HttpClient client = new DefaultHttpClient();

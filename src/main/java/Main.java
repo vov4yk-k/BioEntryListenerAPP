@@ -83,7 +83,8 @@ public class Main {
 
             if(fingerprintTemplate == null) continue;
 
-            VerifyFingerprintOption fingerprintOption = new VerifyFingerprintOption(fingerprintTemplate.getTemplate0(),fingerprintTemplate.getTemplate1());
+            FingerprintTemplate fingerprint = fingerprintTemplate[0];
+            VerifyFingerprintOption fingerprintOption = new VerifyFingerprintOption(fingerprint.getTemplate0(),fingerprint.getTemplate1());
             VerifyFingerprintResult verifyFingerprintResponse = biostar.verifyFingerprint(fingerprintOption);
             System.out.println(verifyFingerprintResponse.toString());
 
