@@ -1,5 +1,6 @@
 import BiostarAPI.*;
 import Sniff.SnifferThread;
+import UT.UTConnection;
 import jpcap.JpcapCaptor;
 import jpcap.NetworkInterface;
 
@@ -19,7 +20,8 @@ public class Main {
         //testSniffer();
         //testBiostar();
         //testBioSniffer();
-        testVerifyFingerprint();
+        //testVerifyFingerprint();
+        testUT();
     }
 
     public static void testSniffer(){
@@ -35,8 +37,6 @@ public class Main {
         SnifferThread snifferThread = new SnifferThread(0,true,ip);
         snifferThread.start();
     }
-
-
 
     public static void testBiostar(){
 
@@ -92,12 +92,28 @@ public class Main {
 
     }
 
-
     public static void testBioSniffer(){
         Biostar biostar = new Biostar("complex","HR","12345qwerty");
         biostar.setDeviceId("539332191");
 
         SnifferThread snifferThread = new SnifferThread(0,true,biostar);
         snifferThread.start();
+    }
+
+    public static void testUT() {
+
+        Biostar biostar = new Biostar("complex","HR","12345qwerty");
+
+        EventQuery eventQuery = new EventQuery();
+        eventQuery.setDevice_id("539332191");
+        Calendar date = Calendar.getInstance();
+        Date startDate = new java.util.Date(date.getTimeInMillis() - 30000000);
+        Date curDate = new java.util.Date(date.getTimeInMillis());
+        String[] dateArray ={Biostar.getISO8601StringForDate(startDate),Biostar.getISO8601StringForDate(curDate)};
+        eventQuery.setDatetime(dateArray);
+        EventLogSearchResultWithoutTotal nextLog = biostar.searchLog(eventQuery,false);
+
+        UTConnection utConnection = new UTConnection();
+        utConnection.setData(nextLog);
     }
 }
